@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <meta charset="utf-8">
+    <title>CPU Monitor</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ request.static_url('usage_monitor:static_resources/style.css') }}">
+</head>
+<body>
+    <h1 class="display-4 font-weight-bold text-center">CPU Usage</h1>
+    <div id="cpu_usage" class="font-weight-bold h2 text-info text-center"></div>
+    <div class="text-center">
+        <button id="update_usage" type="button" class="btn btn-info btn-lg">Update</button>
+    </div>
+    <svg></svg>
+    <script src="{{ request.static_url('usage_monitor:static_resources/cpu_usage.js') }}"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</body>
+</html>

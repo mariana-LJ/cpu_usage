@@ -1,0 +1,26 @@
+svg {
+  overflow: visible;
+  margin-left: 20px;
+}
+
+rect {
+  stroke: white;
+  stroke-width: 1px;
+}
+
+#bottom-axis text{
+  transform: rotate(45deg);
+  text-anchor: start;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-family: sans-serif;
+  font-size: 11px;
+}
