@@ -7,43 +7,58 @@ d3.select('svg')
   .style('width', WIDTH)
   .style('height', HEIGHT)
   
-document.getElementById("update_usage").addEventListener('click', getCPUUsage);
+function updateBarChart(cpu_percent) {
+  const rectangles = d3.select('svg').selectAll('rect').data(cpu_percent);
+  rectangles.transition().duration(1000);
+  rectangles.enter().append('rect');
+
+  let yScale = d3.scaleLinear();
+  yScale.range([HEIGHT, 0]);
+  let yMin = d3.min(cpu_percent);
+  let yMax = d3.max(cpu_percent);
+  yScale.domain([yMin - 1, yMax]);
+
+  let xScale = d3.scaleLinear();
+  xScale.range([0, WIDTH]);
+  xScale.domain([0, cpu_percent.length]);
+  
+  let yDomain = d3.extent(cpu_percent, (datum, index) => datum);
+  let colorScale = d3.scaleLinear();
+  colorScale.domain(yDomain);
+  colorScale.range(['#00cc00', 'blue']);
+
+  rectangles
+    .attr('height', (datum, index) => HEIGHT - yScale(datum))
+    .attr('x', (datum, index) => xScale(index))
+    .attr('y', (datum, index) => yScale(datum))
+    .attr('width', WIDTH/cpu_percent.length)
+    .attr('fill', (datum, index) => colorScale(datum))
+
+  let leftAxis = d3.axisLeft(yScale);
+  d3.select('svg')
+    .append('g')
+    .attr('id', 'left-axis')
+    .call(leftAxis);
+
+  let usageScale = d3.scaleBand();
+  let usageDomain = cpu_percent.map(value => 'CPU' + cpu_percent.indexOf(value));
+  usageScale.range([0, WIDTH]);
+  usageScale.domain(usageDomain);
+
+  let bottomAxis = d3.axisBottom(usageScale);
+  d3.select('svg')
+    .append('g')
+    .attr('id', 'bottom-axis')
+    .call(bottomAxis)
+    .attr('transform', 'translate(0, '+HEIGHT+')');
+}
 
 function getCPUUsage() {
   fetch('/cpu_usage')
-  .then((res) => {
-    return res.json();
-  })
-  .then((rawData) => {
-    d3.select('svg').selectAll('rect')
-    .data(rawData.cpu_percent)
-    .enter()
-    .append('rect');
-    let yScale = d3.scaleLinear();
-    yScale.range([HEIGHT, 0]);
-    let yMin = d3.min(rawData.cpu_percent);
-    let yMax = d3.max(rawData.cpu_percent);
-    yScale.domain([yMin - 1, yMax]);
-
-    d3.selectAll('rect')
-      .attr('height', (datum, index) => HEIGHT - yScale(datum));
-    
-    let xScale = d3.scaleLinear();
-    xScale.range([0, WIDTH]);
-    xScale.domain([0, rawData.cpu_percent.length]);
-    
-    d3.selectAll('rect')
-      .attr('x', (datum, index) => xScale(index));
-    
-    d3.selectAll('rect')
-      .attr('y', (datum, index) => yScale(datum));
-    
-    d3.selectAll('rect')
-      .attr('width', WIDTH/rawData.cpu_percent.length);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then((res) => res.json())
+  .then(data => updateBarChart(data.cpu_percent))
+  .catch((err) => console.log(err));
+  setTimeout(getCPUUsage, 2000);
 }
 
-document.getElementById("cpu_usage").innerHTML = "N/A";
+getCPUUsage();

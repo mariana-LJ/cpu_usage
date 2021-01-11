@@ -12,9 +12,6 @@
 <body>
     <h1 class="display-4 font-weight-bold text-center">CPU Usage</h1>
     <div id="cpu_usage" class="font-weight-bold h2 text-info text-center"></div>
-    <div class="text-center">
-        <button id="update_usage" type="button" class="btn btn-info btn-lg">Update</button>
-    </div>
     <svg></svg>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="{{ request.static_url('usage_monitor:static_resources/cpu_usage.js') }}"></script>
